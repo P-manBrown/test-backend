@@ -1,0 +1,63 @@
+x-mysql_env_path: &mysql_env_path
+  ./Docker/db/environment/mysql.env
+x-puma-socket-volume: &puma-socket-volume
+  puma-socket:/home/${API_USER_NAME}/${COMPOSE_PROJECT_NAME}/tmp/sockets
+x-github-credentials-path: &github-credentials-path
+  ./Docker/api/environment/github-credentials.env
+
+services:
+  db:
+    build:
+      context: ./Docker/db
+    healthcheck:
+      test: mysqladmin ping -h db -u$${MYSQL_USER} -p$${MYSQL_PASSWORD}
+      interval: 1s
+      start_period: 60s
+    restart: on-failure
+    volumes:
+      - mysql-datadir:/var/lib/mysql
+    env_file: *mysql_env_path
+    ports:
+      - ${DB_PORT:-3306}:3306
+  api:
+    build:
+      context: .
+      dockerfile: ./Docker/api/Dockerfile
+      args:
+        - PROJECT_NAME=${COMPOSE_PROJECT_NAME:?}
+        - USER_NAME=${API_USER_NAME:?}
+      secrets:
+        - github-credentials
+    restart: on-failure
+    volumes:
+      - .:/home/${API_USER_NAME}/${COMPOSE_PROJECT_NAME}
+      - gem-home:/usr/local/bundle
+      - *puma-socket-volume
+    environment:
+      - RAILS_ENV=${RAILS_ENV:-development}
+      - XDG_CONFIG_DIRS=/home/${API_USER_NAME}/${COMPOSE_PROJECT_NAME}
+    env_file:
+      - *mysql_env_path
+      - *github-credentials-path
+    ports:
+      - ${API_PORT:-3001}:3000
+    depends_on:
+      db:
+        condition: service_healthy
+  web:
+    build:
+      context: ./Docker/web
+    restart: on-failure
+    volumes:
+      - *puma-socket-volume
+    ports:
+      - ${WEB_PORT:-80}:80
+    depends_on:
+      - api
+secrets:
+  github-credentials:
+    file: *github-credentials-path
+volumes:
+  mysql-datadir:
+  gem-home:
+  puma-socket:
