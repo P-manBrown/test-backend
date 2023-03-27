@@ -41,4 +41,4 @@ registries:
   github-packages:
     type: rubygems-server
     url: https://rubygems.pkg.github.com
-    token: ${{secrets.GITHUB_PERSONAL_ACCESS_TOKEN}}
+    token: ${{secrets.MY_GITHUB_TOKEN}}
