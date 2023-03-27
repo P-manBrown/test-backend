@@ -1,4 +1,11 @@
 version: 2
+
+registries:
+  github-packages:
+    type: rubygems-server
+    url: https://rubygems.pkg.github.com
+    token: ${{secrets.MY_GITHUB_TOKEN}}
+
 updates:
   - package-ecosystem: 'docker'
     directory: '/Docker/api'
@@ -28,6 +35,8 @@ updates:
       prefix: 'build'
     target-branch: 'main'
   - package-ecosystem: 'bundler'
+    registries:
+      - github-packages
     directory: '/'
     schedule:
       interval: 'daily'
@@ -37,9 +46,4 @@ updates:
       prefix: 'build'
     target-branch: 'main'
 
-registries:
-  github-packages:
-    type: rubygems-server
-    url: https://rubygems.pkg.github.com
-    token: ${{secrets.MY_GITHUB_TOKEN}}
 
