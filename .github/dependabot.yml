@@ -3,8 +3,6 @@ updates:
   - package-ecosystem: 'docker'
     directory: '/Docker/api'
     schedule:
-      interval: 'daily'
-      time: '03:00'
       timezone: 'Asia/Tokyo'
     commit-message:
       prefix: 'build'
@@ -30,8 +28,6 @@ updates:
   - package-ecosystem: 'bundler'
     directory: '/'
     schedule:
-      interval: 'daily'
-      time: '03:00'
       timezone: 'Asia/Tokyo'
     commit-message:
       prefix: 'build'
