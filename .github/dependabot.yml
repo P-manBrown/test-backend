@@ -36,7 +36,6 @@ updates:
     commit-message:
       prefix: 'build'
     target-branch: 'main'
-
 registries:
   github-packages:
     type: rubygems-server
