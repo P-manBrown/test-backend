@@ -1,4 +1,4 @@
-FROM nginx:1.22.0
+FROM nginx:1.25.1
 
 ARG USER_NAME=nginx
 ENV TZ=Asia/Tokyo
